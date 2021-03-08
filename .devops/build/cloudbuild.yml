@@ -22,7 +22,7 @@ steps:
       "--destination=gcr.io/$PROJECT_ID/deliverycenter-service-osrm:$SHORT_SHA",
       "--destination=gcr.io/$PROJECT_ID/deliverycenter-service-osrm:latest",
       "--cache=true",
-      "--cache-ttl=72h"]
+      "--cache-ttl=2160h"]
 
   - id: app-apply-deployment
     name: 'gcr.io/cloud-builders/kubectl'

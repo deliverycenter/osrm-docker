@@ -38,7 +38,28 @@ spec:
             port: 5000
           initialDelaySeconds: 30
           timeoutSeconds: 1
-        resources: {}
         stdin: true
         tty: true
 status: {}
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: deliverycenter-service-osrm-car-hpa
+  namespace: production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: deliverycenter-service-osrm-car
+  maxReplicas: 4
+  minReplicas: 2
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageValue: 12Gi
