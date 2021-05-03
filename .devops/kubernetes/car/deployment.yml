@@ -4,7 +4,7 @@ metadata:
   labels:
     app: deliverycenter-service-osrm-car
   name: deliverycenter-service-osrm-car
-  namespace: production
+  namespace: staging
 spec:
   replicas: 2
   strategy:
@@ -21,17 +21,17 @@ spec:
         app: deliverycenter-service-osrm-car
     spec:
       containers:
-      - image: gcr.io/deliverycenter-prod/deliverycenter-service-osrm:latest
+      - image: gcr.io/deliverycenter-stag/deliverycenter-service-osrm:latest
         name: deliverycenter-service-osrm-car
         ports:
         - containerPort: 80
         resources:
           limits:
-            memory: "16Gi"
-            cpu: "6"
+            memory: "8Gi"
+            cpu: "3"
           requests:
-            memory: "14Gi"
-            cpu: "4"
+            memory: "7Gi"
+            cpu: "2"
         readinessProbe:
           httpGet:
             path: /nearest/v1/healthz/0,0
@@ -46,7 +46,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: deliverycenter-service-osrm-car-hpa
-  namespace: production
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -62,4 +62,4 @@ spec:
   - type: Resource
     resource:
       name: memory
-      targetAverageValue: 12Gi
+      targetAverageValue: 6Gi

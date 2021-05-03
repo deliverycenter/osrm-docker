@@ -4,7 +4,7 @@ metadata:
   labels:
     app: deliverycenter-service-osrm-bicycle
   name: deliverycenter-service-osrm-bicycle
-  namespace: production
+  namespace: staging
 spec:
   replicas: 1
   strategy:
@@ -21,24 +21,23 @@ spec:
         app: deliverycenter-service-osrm-bicycle
     spec:
       containers:
-      - image: gcr.io/deliverycenter-prod/deliverycenter-service-osrm:latest
+      - image: gcr.io/deliverycenter-stag/deliverycenter-service-osrm:latest
         name: deliverycenter-service-osrm-bicycle
         ports:
         - containerPort: 80
         resources:
           limits:
-            memory: "16Gi"
-            cpu: "3"
-          requests:
-            memory: "14Gi"
+            memory: "8Gi"
             cpu: "2"
+          requests:
+            memory: "7Gi"
+            cpu: "1"
         readinessProbe:
           httpGet:
             path: /nearest/v1/healthz/0,0
             port: 5000
           initialDelaySeconds: 30
           timeoutSeconds: 1
-        resources: {}
         stdin: true
         tty: true
 status: {}
@@ -47,7 +46,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: deliverycenter-service-osrm-bicycle-hpa
-  namespace: production
+  namespace: staging
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -63,4 +62,4 @@ spec:
   - type: Resource
     resource:
       name: memory
-      targetAverageValue: 12Gi
+      targetAverageValue: 6Gi

@@ -4,7 +4,7 @@ metadata:
   labels:
     app: deliverycenter-service-osrm-bicycle
   name: deliverycenter-service-osrm-bicycle-service
-  namespace: production
+  namespace: staging
 spec:
   ports:
   - name: "http"
@@ -17,6 +17,4 @@ spec:
     targetPort: 5000
   selector:
     app: deliverycenter-service-osrm-bicycle
-  type: LoadBalancer
-status:
-  loadBalancer: {}
+  type: ClusterIP
