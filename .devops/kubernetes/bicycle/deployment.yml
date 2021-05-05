@@ -7,11 +7,6 @@ metadata:
   namespace: staging
 spec:
   replicas: 1
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 2
-      maxUnavailable: 1
   selector:
     matchLabels:
       app: deliverycenter-service-osrm-bicycle
@@ -21,17 +16,17 @@ spec:
         app: deliverycenter-service-osrm-bicycle
     spec:
       containers:
-      - image: gcr.io/deliverycenter-stag/deliverycenter-service-osrm:latest
+      - image: gcr.io/deliverycenter-stag/deliverycenter-service-osrm:bicycle
         name: deliverycenter-service-osrm-bicycle
         ports:
         - containerPort: 80
         resources:
           limits:
-            memory: "8Gi"
-            cpu: "2"
+            memory: "12Gi"
+            cpu: "3"
           requests:
-            memory: "7Gi"
-            cpu: "1"
+            memory: "10Gi"
+            cpu: "2"
         readinessProbe:
           httpGet:
             path: /nearest/v1/healthz/0,0
@@ -40,26 +35,6 @@ spec:
           timeoutSeconds: 1
         stdin: true
         tty: true
+      nodeSelector:
+        osrm: "true"
 status: {}
----
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: deliverycenter-service-osrm-bicycle-hpa
-  namespace: staging
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: deliverycenter-service-osrm-bicycle
-  maxReplicas: 2
-  minReplicas: 1
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      targetAverageUtilization: 70
-  - type: Resource
-    resource:
-      name: memory
-      targetAverageValue: 6Gi

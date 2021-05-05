@@ -6,12 +6,7 @@ metadata:
   name: deliverycenter-service-osrm-car
   namespace: staging
 spec:
-  replicas: 2
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 2
-      maxUnavailable: 1
+  replicas: 1
   selector:
     matchLabels:
       app: deliverycenter-service-osrm-car
@@ -21,16 +16,16 @@ spec:
         app: deliverycenter-service-osrm-car
     spec:
       containers:
-      - image: gcr.io/deliverycenter-stag/deliverycenter-service-osrm:latest
+      - image: gcr.io/deliverycenter-stag/deliverycenter-service-osrm:car
         name: deliverycenter-service-osrm-car
         ports:
-        - containerPort: 80
+        - containerPort: 5000
         resources:
           limits:
-            memory: "8Gi"
+            memory: "12Gi"
             cpu: "3"
           requests:
-            memory: "7Gi"
+            memory: "10Gi"
             cpu: "2"
         readinessProbe:
           httpGet:
@@ -40,26 +35,6 @@ spec:
           timeoutSeconds: 1
         stdin: true
         tty: true
+      nodeSelector:
+        osrm: "true"
 status: {}
----
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: deliverycenter-service-osrm-car-hpa
-  namespace: staging
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: deliverycenter-service-osrm-car
-  maxReplicas: 4
-  minReplicas: 2
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      targetAverageUtilization: 70
-  - type: Resource
-    resource:
-      name: memory
-      targetAverageValue: 6Gi
